@@ -1,7 +1,17 @@
 const apiRouter = require('express').Router();
+const {readJsonFile,writeAndAppend} = require('../helper/fileUtils');
+// TODO: POST /api/notes route
+// TODO: DELETE /api/notes/:id route
 
-apiRouter.get('/',(req,res) => {
-    res.send('Hello from your server!');
+// GET /api/notes route
+apiRouter.get('/', async (req,res) => {
+    const noteData = await readJsonFile('./db/notes.json');
+    if(noteData){
+        res.json(noteData);
+    } else {
+        console.log(`Could not load data for ${req.method} request from ${req.baseUrl}`);
+        res.json([]);
+    }
 });
 
 apiRouter.post('/',(req,res) => {

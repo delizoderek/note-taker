@@ -1,12 +1,20 @@
 const express = require('express');
+const path = require('path');
 const apiRouter = require('./apiRouter');
 const app = express();
 
-app.use('/notes', apiRouter);
-// TODO: GET /api/notes route
-// TODO: POST /api/notes route
-// TODO: DELETE /api/notes/:id route
-// TODO: GET /notes route. returns notes.html
-// TODO: * route. returns index.html
+app.use(express.static('public'));
+app.use('/api/notes', apiRouter);
+
+// GET /notes route. returns notes.html
+app.get('/notes',(req,res)=>{
+    console.log(__dirname);
+    res.sendFile(path.join(__dirname,"../public/notes.html"));
+});
+
+// * route. returns index.html
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,"../public/index.html"));
+});
 
 module.exports = app;
