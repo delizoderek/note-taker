@@ -1,5 +1,6 @@
 const apiRouter = require('express').Router();
-const {readFile,readAndAppend} = require('../helper/fileUtils');
+const {readFile,readAndAppend, writeToFile} = require('../helper/fileUtils');
+const uuid = require('../helper/uuid');
 // TODO: DELETE /api/notes/:id route
 
 // GET /api/notes route
@@ -18,6 +19,7 @@ apiRouter.get('/', (req,res) => {
 // POST /api/notes route
 apiRouter.post('/',(req,res) => {
     if(req.body && req.body.title && req.body.text){
+        req.body.id = uuid();
         readAndAppend(req.body,"./db/notes.json");
         res.send(`${req.method} request received and data updated`);
     } else {
@@ -25,7 +27,23 @@ apiRouter.post('/',(req,res) => {
     }
 });
 
-apiRouter.delete('/',(req,res) => {
+apiRouter.delete('/:id',(req,res) => {
+    if(req.params && req.params.id){
+        readFile('./db/notes.json','utf8').then((data) =>{
+            if(data){
+                const noteData = JSON.parse(data);
+                let spliceId = -1;
+                for(let note in noteData){
+                    if(noteData[note].id == req.params.id){
+                        spliceId = note;
+                        noteData.splice(note,1);
+                        break;
+                    }
+                }
+                writeToFile('./db/notes.json',noteData);
+            }
+        });
+    }
     res.send('Message from delete');
 });
 
