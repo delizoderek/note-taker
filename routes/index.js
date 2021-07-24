@@ -4,11 +4,12 @@ const apiRouter = require('./apiRouter');
 const app = express();
 
 app.use(express.static('public'));
+
+// Attaches the router for /api/notes
 app.use('/api/notes', apiRouter);
 
 // GET /notes route. returns notes.html
 app.get('/notes',(req,res)=>{
-    console.log(__dirname);
     res.sendFile(path.join(__dirname,"../public/notes.html"));
 });
 
